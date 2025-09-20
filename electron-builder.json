@@ -1,0 +1,43 @@
+{
+    "appId": "com.momentum.networth-tracker",
+    "productName": "Momentum Net Worth Tracker",
+    "directories": {
+        "output": "release"
+    },
+    "files": [
+        "dist/**/*",
+        "package.json"
+    ],
+    "mac": {
+        "category": "public.app-category.finance",
+        "target": [
+            {
+                "target": "dmg",
+                "arch": [
+                    "x64",
+                    "arm64"
+                ]
+            }
+        ]
+    },
+    "win": {
+        "target": [
+            {
+                "target": "nsis",
+                "arch": [
+                    "x64"
+                ]
+            }
+        ]
+    },
+    "linux": {
+        "target": [
+            {
+                "target": "AppImage",
+                "arch": [
+                    "x64"
+                ]
+            }
+        ]
+    }
+}
