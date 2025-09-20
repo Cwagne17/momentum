@@ -8,7 +8,7 @@ import * as path from 'path';
 import { FileSystemHandler } from './file-system-handler';
 
 export class BackupManager {
-    private fileSystemHandler: FileSystemHandler;
+    private readonly fileSystemHandler: FileSystemHandler;
     private readonly maxBackups = 50; // Keep last 50 backups
 
     constructor() {
