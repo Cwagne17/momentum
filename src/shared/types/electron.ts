@@ -42,7 +42,7 @@ export interface ElectronAPI {
     // File dialog operations
     selectFolder: () => Promise<string | null>;
 
-    selectFile: (filters?: Electron.FileFilter[]) => Promise<string | null>;
+    selectFile: (filters?: { name: string; extensions: string[] }[]) => Promise<string | null>;
 
     // Export operations
     exportData: (data: any, format: 'csv' | 'json') => Promise<ExportResult>;

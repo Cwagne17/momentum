@@ -1,26 +1,24 @@
 // Main types export file
-// This will be expanded with data models in later tasks
 
+// Constants
+export * from './constants';
+
+// Base document types
+export * from './base-document';
+
+// Document types
+export * from './asset';
+export * from './liability';
+export * from './monthly-snapshot';
+export * from './portfolio';
+
+// Calculation types
+export * from './calculations';
+
+
+
+// Electron types
 export * from './electron';
 
-// Placeholder for future data model types
-// These will be added in Task 4: Implement core data models and validation schemas
-export interface BaseDocument {
-    // Will be implemented in Task 4
-}
-
-export interface Asset {
-    // Will be implemented in Task 4
-}
-
-export interface Liability {
-    // Will be implemented in Task 4
-}
-
-export interface Entry {
-    // Will be implemented in Task 4
-}
-
-export interface MonthlySnapshot {
-    // Will be implemented in Task 4
-}
+// Re-export utilities for convenience
+export * from '../utils';

@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Duplicate Code Detector",
+  "description": "Monitors TypeScript files for duplicate functions, constants, and types that should be abstracted to shared utilities",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Analyze the modified TypeScript files for duplicate functions, constants, or types. Check if there are similar implementations across different files in the types folder or elsewhere that should be abstracted to the shared/utils folder. Identify any code duplication and suggest refactoring to move common utilities to appropriate shared locations. Focus particularly on utility functions like date validators, type guards, and constants that appear in multiple files."
+  }
+}
