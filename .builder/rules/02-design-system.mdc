@@ -1,0 +1,323 @@
+# Design System & Visual Standards
+
+## Design Philosophy
+
+**Momentum** embodies a modern, trustworthy financial application aesthetic. The design prioritizes clarity, professionalism, and user confidence through muted colors, clean typography, and purposeful visual hierarchy.
+
+### Core Principles
+- **Trust & Reliability**: Muted, professional color palette
+- **Clarity**: Clear visual hierarchy and readable typography
+- **Accessibility**: WCAG 2.1 AA compliance minimum
+- **Consistency**: Systematic approach to spacing, sizing, and patterns
+- **Data Focus**: Charts and numbers are the primary content
+
+## Color Palette
+
+### Primary Colors (Muted & Professional)
+```css
+/* Slate Gray - Primary Brand Color */
+--color-slate-50: #f8fafc;
+--color-slate-100: #f1f5f9;
+--color-slate-200: #e2e8f0;
+--color-slate-300: #cbd5e1;
+--color-slate-400: #94a3b8;
+--color-slate-500: #64748b;   /* Primary */
+--color-slate-600: #475569;
+--color-slate-700: #334155;
+--color-slate-800: #1e293b;
+--color-slate-900: #0f172a;
+
+/* Blue Gray - Secondary */
+--color-blue-gray-50: #f8fafc;
+--color-blue-gray-100: #f1f5f9;
+--color-blue-gray-200: #e2e8f0;
+--color-blue-gray-300: #cbd5e1;
+--color-blue-gray-400: #94a3b8;
+--color-blue-gray-500: #64748b;
+--color-blue-gray-600: #475569;
+--color-blue-gray-700: #334155;
+--color-blue-gray-800: #1e293b;
+--color-blue-gray-900: #0f172a;
+```
+
+### Accent Colors (Subdued)
+```css
+/* Emerald - Success/Growth */
+--color-emerald-50: #ecfdf5;
+--color-emerald-100: #d1fae5;
+--color-emerald-200: #a7f3d0;
+--color-emerald-500: #10b981;   /* Primary success */
+--color-emerald-600: #059669;
+--color-emerald-700: #047857;
+
+/* Rose - Decline/Loss */
+--color-rose-50: #fff1f2;
+--color-rose-100: #ffe4e6;
+--color-rose-200: #fecdd3;
+--color-rose-500: #f43f5e;     /* Primary error */
+--color-rose-600: #e11d48;
+--color-rose-700: #be185d;
+
+/* Amber - Warning/Neutral */
+--color-amber-50: #fffbeb;
+--color-amber-100: #fef3c7;
+--color-amber-200: #fde68a;
+--color-amber-500: #f59e0b;     /* Primary warning */
+--color-amber-600: #d97706;
+--color-amber-700: #b45309;
+```
+
+### Semantic Color Usage
+- **Backgrounds**: slate-50, slate-100 for subtle contrast
+- **Text**: slate-700, slate-800, slate-900 for hierarchy
+- **Borders**: slate-200, slate-300 for definition
+- **Interactive**: slate-500, slate-600 for buttons and links
+- **Success**: emerald-500 for positive financial changes
+- **Error**: rose-500 for negative changes or validation errors
+- **Warning**: amber-500 for alerts or important notices
+
+## Typography
+
+### Font Stack
+```css
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+```
+
+### Typography Scale
+```css
+/* Display & Headings */
+--text-xs: 0.75rem;     /* 12px */
+--text-sm: 0.875rem;    /* 14px */
+--text-base: 1rem;      /* 16px */
+--text-lg: 1.125rem;    /* 18px */
+--text-xl: 1.25rem;     /* 20px */
+--text-2xl: 1.5rem;     /* 24px */
+--text-3xl: 1.875rem;   /* 30px */
+--text-4xl: 2.25rem;    /* 36px */
+
+/* Font Weights */
+--font-normal: 400;
+--font-medium: 500;
+--font-semibold: 600;
+--font-bold: 700;
+
+/* Line Heights */
+--leading-tight: 1.25;
+--leading-snug: 1.375;
+--leading-normal: 1.5;
+--leading-relaxed: 1.625;
+```
+
+### Typography Hierarchy
+- **Page Title**: text-3xl, font-bold, slate-900
+- **Section Headings**: text-2xl, font-semibold, slate-800
+- **Card Titles**: text-xl, font-medium, slate-700
+- **Body Text**: text-base, font-normal, slate-600
+- **Captions**: text-sm, font-normal, slate-500
+- **Financial Values**: text-lg, font-semibold, contextual color
+
+## Component Styles
+
+### Cards
+```css
+.card {
+  background: white;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.75rem; /* 12px */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 1.5rem; /* 24px */
+}
+
+.card-header {
+  border-bottom: 1px solid var(--color-slate-100);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+```
+
+### Buttons
+```css
+/* Primary Button */
+.btn-primary {
+  background: var(--color-slate-600);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border: none;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover {
+  background: var(--color-slate-700);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: white;
+  color: var(--color-slate-600);
+  border: 1px solid var(--color-slate-300);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+}
+.btn-secondary:hover {
+  background: var(--color-slate-50);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: var(--color-rose-500);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border: none;
+}
+```
+
+### Form Controls
+```css
+.input {
+  border: 1px solid var(--color-slate-300);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-slate-500);
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.label {
+  font-weight: 500;
+  color: var(--color-slate-700);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+```
+
+## Chart & Visualization Guidelines
+
+### Chart Colors
+```css
+/* Primary chart line/area */
+--chart-primary: var(--color-slate-500);
+--chart-primary-light: var(--color-slate-300);
+
+/* Success/Growth trends */
+--chart-success: var(--color-emerald-500);
+--chart-success-light: var(--color-emerald-200);
+
+/* Decline trends */
+--chart-decline: var(--color-rose-500);
+--chart-decline-light: var(--color-rose-200);
+
+/* Secondary data */
+--chart-secondary: var(--color-blue-gray-400);
+--chart-grid: var(--color-slate-200);
+```
+
+### Chart Styling
+- **Grid lines**: Subtle slate-200, minimal opacity
+- **Axes**: slate-400 for labels, slate-300 for lines
+- **Data points**: 4px radius, semi-transparent fill
+- **Hover states**: Increased opacity, subtle shadow
+- **Tooltips**: White background, slate-700 text, subtle shadow
+
+### Chart Types
+- **Net Worth Line Chart**: Primary trend line with area fill
+- **Asset/Liability Bar Chart**: Comparative bars with muted colors
+- **Category Breakdown**: Donut charts with sequential slate tones
+
+## Icons & Graphics
+
+### Icon System
+- **Style**: Outline-based icons (Heroicons or similar)
+- **Size**: 16px, 20px, 24px standard sizes
+- **Color**: Inherit from parent text color
+- **Weight**: 1.5px stroke width for consistency
+
+### Common Icons
+- **Dashboard**: Home, grid layout
+- **Portfolios**: Folder, collection
+- **Holdings**: List, items
+- **Add/Create**: Plus circle
+- **Edit**: Pencil, edit
+- **Delete**: Trash, X
+- **Export**: Download, share
+- **Settings**: Cog, gear
+
+### Illustrations
+- **Empty States**: Simple, muted illustrations
+- **Error States**: Friendly, non-alarming graphics
+- **Success States**: Subtle celebration graphics
+
+## Spacing & Layout
+
+### Spacing Scale
+```css
+--space-1: 0.25rem;   /* 4px */
+--space-2: 0.5rem;    /* 8px */
+--space-3: 0.75rem;   /* 12px */
+--space-4: 1rem;      /* 16px */
+--space-5: 1.25rem;   /* 20px */
+--space-6: 1.5rem;    /* 24px */
+--space-8: 2rem;      /* 32px */
+--space-10: 2.5rem;   /* 40px */
+--space-12: 3rem;     /* 48px */
+--space-16: 4rem;     /* 64px */
+```
+
+### Layout Patterns
+- **Page margins**: space-8 (32px) minimum
+- **Card spacing**: space-6 (24px) internal padding
+- **Component gaps**: space-4 (16px) between related elements
+- **Section separation**: space-12 (48px) between major sections
+
+## Accessibility Requirements
+
+### Color Contrast
+- **Text on background**: Minimum 4.5:1 ratio (WCAG AA)
+- **Large text**: Minimum 3:1 ratio
+- **Interactive elements**: 3:1 ratio for focus indicators
+- **Charts**: Patterns/textures in addition to color
+
+### Focus Management
+- **Focus indicators**: 3px outline, slate-500 color
+- **Skip links**: Hidden until focused
+- **Tab order**: Logical, predictable sequence
+- **Keyboard navigation**: All interactive elements accessible
+
+### Screen Reader Support
+- **Semantic HTML**: Proper heading hierarchy, landmarks
+- **ARIA labels**: Descriptive labels for complex UI
+- **Chart descriptions**: Text alternatives for visual data
+- **State announcements**: Dynamic content changes announced
+
+### Motion & Animation
+- **Reduced motion**: Respect user preferences
+- **Subtle transitions**: 200ms duration maximum
+- **Purpose-driven**: Animation serves usability, not decoration
+- **Accessibility escape**: Option to disable animations
+
+## Responsive Design
+
+### Breakpoints
+```css
+--breakpoint-sm: 640px;   /* Small devices */
+--breakpoint-md: 768px;   /* Medium devices */
+--breakpoint-lg: 1024px;  /* Large devices */
+--breakpoint-xl: 1280px;  /* Extra large devices */
+```
+
+### Layout Adaptations
+- **Desktop-first**: Primary target is desktop application
+- **Minimum width**: 800px application window
+- **Flexible grids**: CSS Grid for main layouts
+- **Responsive typography**: Maintain readability at all sizes
+- **Touch considerations**: 44px minimum touch targets (future mobile)
+
+This design system ensures Momentum presents a professional, trustworthy interface that users feel confident managing their financial data within.

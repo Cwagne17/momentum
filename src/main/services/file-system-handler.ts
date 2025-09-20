@@ -30,17 +30,12 @@ export class FileSystemHandler {
             await fs.writeFile(testFile, 'test');
             await fs.unlink(testFile);
         } catch (error) {
-            if (error instanceof Error && 'code' in error) {
-                switch ((error as any).code) {
-                    case 'ENOENT':
-                        throw new Error('Folder does not exist');
-                    case 'EACCES':
-                    case 'EPERM':
-                        throw new Error('Insufficient permissions to write to folder');
-                    default:
-                        throw new Error(`Cannot access folder: ${error.message}`);
-                }
+            // If this is a filesystem error with a code, rethrow it to preserve the original error
+            if (error && typeof (error as any).code === 'string') {
+                throw error;
             }
+
+            // Otherwise, rethrow as-is
             throw error;
         }
     }
@@ -73,17 +68,12 @@ export class FileSystemHandler {
             if (error instanceof SyntaxError) {
                 throw new Error(`Invalid JSON format in file: ${filePath}`);
             }
-            if (error instanceof Error && 'code' in error) {
-                switch ((error as any).code) {
-                    case 'ENOENT':
-                        throw new Error(`File not found: ${filePath}`);
-                    case 'EACCES':
-                    case 'EPERM':
-                        throw new Error(`Permission denied: ${filePath}`);
-                    default:
-                        throw new Error(`Failed to read file: ${error.message}`);
-                }
+
+            // Preserve filesystem error codes (ENOENT, EACCES, etc.) by rethrowing the original error
+            if (error && typeof (error as any).code === 'string') {
+                throw error;
             }
+
             throw error;
         }
     }

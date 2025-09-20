@@ -1,0 +1,304 @@
+# Data Model & Business Logic
+
+## Overview
+
+The Momentum application manages personal financial data through a carefully designed data model that prioritizes simplicity, accuracy, and historical tracking. All data is stored locally in JSON format with strong TypeScript type definitions.
+
+## Core Data Entities
+
+### Portfolio
+The root container for all financial data, representing a user's complete financial picture.
+
+```typescript
+interface Portfolio {
+  id: string;                    // UUID v4
+  name: string;                  // User-defined portfolio name
+  createdAt: Date;              // Creation timestamp
+  updatedAt: Date;              // Last modification timestamp
+  assets: Asset[];              // Array of asset holdings
+  liabilities: Liability[];     // Array of liability holdings
+  monthlySnapshots: MonthlySnapshot[]; // Historical monthly data
+  currency: string;             // Base currency (default: 'USD')
+  settings: PortfolioSettings;  // User preferences
+}
+
+interface PortfolioSettings {
+  displayCurrency: string;      // Currency for display
+  showGoalLine: boolean;        // Show goal projection on charts
+  goalAmount?: number;          // Target net worth amount
+  goalDate?: Date;              // Target achievement date
+  backupEnabled: boolean;       // Automatic backup setting
+}
+```
+
+### Asset
+Represents any item of value owned by the user.
+
+```typescript
+interface Asset extends BaseDocument {
+  name: string;                 // User-defined asset name
+  category: AssetCategory;      // Type classification
+  currentValue: number;         // Current market/estimated value
+  acquisitionValue?: number;    // Original purchase/acquisition cost
+  acquisitionDate?: Date;       // When acquired
+  description?: string;         // Optional notes
+  isActive: boolean;           // Whether currently held
+  entries: Entry[];            // Historical value entries
+}
+
+enum AssetCategory {
+  CASH = 'cash',                    // Bank accounts, cash equivalents
+  INVESTMENT = 'investment',        // Stocks, bonds, mutual funds
+  RETIREMENT = 'retirement',        // 401k, IRA, pension accounts
+  REAL_ESTATE = 'real_estate',     // Primary residence, rental property
+  PERSONAL_PROPERTY = 'personal_property', // Vehicles, jewelry, collectibles
+  BUSINESS = 'business',            // Business equity, partnerships
+  OTHER = 'other'                   // Miscellaneous assets
+}
+```
+
+### Liability
+Represents any debt or financial obligation.
+
+```typescript
+interface Liability extends BaseDocument {
+  name: string;                 // User-defined liability name
+  category: LiabilityCategory;  // Type classification
+  currentBalance: number;       // Current outstanding balance
+  originalAmount?: number;      // Original loan/debt amount
+  interestRate?: number;        // Annual percentage rate
+  minimumPayment?: number;      // Required monthly payment
+  dueDate?: Date;              // Payment due date
+  description?: string;         // Optional notes
+  isActive: boolean;           // Whether debt is still owed
+  entries: Entry[];            // Historical balance entries
+}
+
+enum LiabilityCategory {
+  MORTGAGE = 'mortgage',            // Home loans
+  CREDIT_CARD = 'credit_card',     // Credit card debt
+  AUTO_LOAN = 'auto_loan',         // Vehicle financing
+  STUDENT_LOAN = 'student_loan',   // Educational debt
+  PERSONAL_LOAN = 'personal_loan', // Personal/unsecured loans
+  BUSINESS_DEBT = 'business_debt', // Business-related debt
+  OTHER = 'other'                   // Miscellaneous liabilities
+}
+```
+
+### Entry
+Historical data points for tracking value changes over time.
+
+```typescript
+interface Entry extends BaseDocument {
+  date: Date;                   // Entry date (month precision)
+  value: number;               // Value at this date
+  note?: string;               // Optional note about the change
+  source: EntrySource;         // How this entry was created
+}
+
+enum EntrySource {
+  MANUAL = 'manual',           // User manually entered
+  IMPORT = 'import',           // Imported from file
+  CALCULATED = 'calculated',   // System calculated value
+  ESTIMATE = 'estimate'        // Estimated/projected value
+}
+```
+
+### MonthlySnapshot
+Aggregated financial data for a specific month, enabling historical analysis.
+
+```typescript
+interface MonthlySnapshot extends BaseDocument {
+  date: Date;                  // Month/year (first day of month)
+  totalAssets: number;         // Sum of all asset values
+  totalLiabilities: number;    // Sum of all liability balances
+  netWorth: number;           // Assets minus liabilities
+  assetBreakdown: CategoryBreakdown[]; // Assets by category
+  liabilityBreakdown: CategoryBreakdown[]; // Liabilities by category
+  monthlyChange: number;       // Change from previous month
+  monthlyChangePercent: number; // Percentage change from previous month
+  notes?: string;             // Optional monthly notes
+  isProjected: boolean;       // Whether this is a future projection
+}
+
+interface CategoryBreakdown {
+  category: string;           // Category name
+  value: number;             // Total value for category
+  percentage: number;        // Percentage of total
+  itemCount: number;         // Number of items in category
+}
+```
+
+### BaseDocument
+Common fields for all persistent entities.
+
+```typescript
+interface BaseDocument {
+  id: string;                 // UUID v4 identifier
+  createdAt: Date;           // Creation timestamp
+  updatedAt: Date;           // Last modification timestamp
+  version: number;           // Document version for optimistic locking
+}
+```
+
+## Business Logic & Calculations
+
+### Net Worth Calculation
+```typescript
+function calculateNetWorth(assets: Asset[], liabilities: Liability[]): number {
+  const totalAssets = assets
+    .filter(asset => asset.isActive)
+    .reduce((sum, asset) => sum + asset.currentValue, 0);
+  
+  const totalLiabilities = liabilities
+    .filter(liability => liability.isActive)
+    .reduce((sum, liability) => sum + liability.currentBalance, 0);
+  
+  return totalAssets - totalLiabilities;
+}
+```
+
+### Monthly Change Calculation
+```typescript
+function calculateMonthlyChange(
+  currentSnapshot: MonthlySnapshot,
+  previousSnapshot?: MonthlySnapshot
+): { change: number; changePercent: number } {
+  if (!previousSnapshot) {
+    return { change: 0, changePercent: 0 };
+  }
+  
+  const change = currentSnapshot.netWorth - previousSnapshot.netWorth;
+  const changePercent = previousSnapshot.netWorth !== 0 
+    ? (change / Math.abs(previousSnapshot.netWorth)) * 100
+    : 0;
+  
+  return { change, changePercent };
+}
+```
+
+### Category Breakdown Calculation
+```typescript
+function calculateCategoryBreakdown<T extends Asset | Liability>(
+  items: T[],
+  totalValue: number
+): CategoryBreakdown[] {
+  const categoryMap = new Map<string, { value: number; count: number }>();
+  
+  items
+    .filter(item => item.isActive)
+    .forEach(item => {
+      const category = item.category;
+      const currentData = categoryMap.get(category) || { value: 0, count: 0 };
+      categoryMap.set(category, {
+        value: currentData.value + (item as any).currentValue || (item as any).currentBalance,
+        count: currentData.count + 1
+      });
+    });
+  
+  return Array.from(categoryMap.entries()).map(([category, data]) => ({
+    category,
+    value: data.value,
+    percentage: totalValue > 0 ? (data.value / totalValue) * 100 : 0,
+    itemCount: data.count
+  }));
+}
+```
+
+### Regression Trendline
+For projecting future net worth based on historical data.
+
+```typescript
+interface TrendlineData {
+  slope: number;              // Rate of change per month
+  intercept: number;          // Y-intercept
+  rSquared: number;          // Correlation coefficient
+  projection: number;         // Projected value for given date
+}
+
+function calculateTrendline(snapshots: MonthlySnapshot[]): TrendlineData {
+  if (snapshots.length < 2) {
+    return { slope: 0, intercept: 0, rSquared: 0, projection: 0 };
+  }
+  
+  // Convert dates to months since first snapshot
+  const baseDate = snapshots[0].date.getTime();
+  const dataPoints = snapshots.map((snapshot, index) => ({
+    x: index, // Month index
+    y: snapshot.netWorth
+  }));
+  
+  // Linear regression calculation
+  const n = dataPoints.length;
+  const sumX = dataPoints.reduce((sum, point) => sum + point.x, 0);
+  const sumY = dataPoints.reduce((sum, point) => sum + point.y, 0);
+  const sumXY = dataPoints.reduce((sum, point) => sum + (point.x * point.y), 0);
+  const sumXX = dataPoints.reduce((sum, point) => sum + (point.x * point.x), 0);
+  const sumYY = dataPoints.reduce((sum, point) => sum + (point.y * point.y), 0);
+  
+  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  
+  // R-squared calculation
+  const yMean = sumY / n;
+  const ssRes = dataPoints.reduce((sum, point) => {
+    const predicted = slope * point.x + intercept;
+    return sum + Math.pow(point.y - predicted, 2);
+  }, 0);
+  const ssTot = dataPoints.reduce((sum, point) => 
+    sum + Math.pow(point.y - yMean, 2), 0);
+  
+  const rSquared = ssTot > 0 ? 1 - (ssRes / ssTot) : 0;
+  
+  return {
+    slope,
+    intercept,
+    rSquared,
+    projection: 0 // Calculated separately for specific dates
+  };
+}
+
+function projectNetWorth(
+  trendline: TrendlineData,
+  targetDate: Date,
+  baseDate: Date
+): number {
+  const monthsDiff = (targetDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44); // Average month length
+  return trendline.slope * monthsDiff + trendline.intercept;
+}
+```
+
+## Data Persistence
+
+### File Structure
+```
+portfolios/
+├── portfolio-{id}.json      # Main portfolio data
+├── snapshots-{id}.json     # Monthly snapshots
+└── backup/
+    ├── {timestamp}-portfolio-{id}.json
+    └── {timestamp}-snapshots-{id}.json
+```
+
+### Validation Rules
+1. **Required Fields**: All required fields must be present and valid
+2. **Data Types**: Strict type checking for all fields
+3. **Value Constraints**: Negative values allowed only where appropriate
+4. **Date Validation**: Dates must be valid and logical (no future entries unless projected)
+5. **Currency Consistency**: All values in same currency within a portfolio
+6. **ID Uniqueness**: All IDs must be unique within their scope
+
+### Data Integrity
+- **Atomic Operations**: All related changes committed together
+- **Backup Creation**: Automatic backups before significant changes
+- **Version Control**: Document versioning for conflict detection
+- **Consistency Checks**: Regular validation of calculated fields
+- **Orphan Prevention**: Cascade deletes for related entities
+
+### Migration Strategy
+- **Schema Versioning**: Each portfolio file includes schema version
+- **Backward Compatibility**: Support for previous schema versions
+- **Migration Scripts**: Automated data transformation when needed
+- **Validation After Migration**: Ensure data integrity post-migration
+
+This data model provides a robust foundation for tracking personal net worth while maintaining data integrity and enabling sophisticated analysis of financial trends over time.

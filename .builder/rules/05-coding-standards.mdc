@@ -1,0 +1,483 @@
+# Coding Standards & Development Practices
+
+## TypeScript Configuration
+
+### Strict Type Checking
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true
+  }
+}
+```
+
+### Type Definition Standards
+- **Prefer interfaces over types** for object shapes
+- **Use type aliases** for union types and complex types
+- **Export all public types** from dedicated type files
+- **Use generic constraints** to improve type safety
+- **Avoid `any` type** - use `unknown` or proper typing instead
+
+### Naming Conventions
+```typescript
+// Interfaces: PascalCase with descriptive names
+interface PortfolioSettings {
+  displayCurrency: string;
+  showGoalLine: boolean;
+}
+
+// Types: PascalCase for complex types
+type ChartDataPoint = {
+  date: Date;
+  value: number;
+};
+
+// Enums: PascalCase with SCREAMING_SNAKE_CASE values
+enum AssetCategory {
+  REAL_ESTATE = 'real_estate',
+  INVESTMENT = 'investment'
+}
+
+// Functions: camelCase with verb prefix
+function calculateNetWorth(assets: Asset[]): number { }
+
+// Variables: camelCase, descriptive names
+const monthlySnapshots: MonthlySnapshot[] = [];
+const isLoading: boolean = false;
+
+// Constants: SCREAMING_SNAKE_CASE
+const DEFAULT_CURRENCY = 'USD';
+const MAX_PORTFOLIO_SIZE = 1000;
+```
+
+## React Component Standards
+
+### Component Structure
+```typescript
+// 1. Imports (grouped and sorted)
+import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import { LineChart, Line, XAxis, YAxis } from 'recharts';
+
+import { Asset, MonthlySnapshot } from '@/shared/types';
+import { usePortfolioStore } from '@/stores/portfolio';
+import { formatCurrency } from '@/utils/formatting';
+
+// 2. Type definitions
+interface NetWorthChartProps {
+  snapshots: MonthlySnapshot[];
+  height?: number;
+  showProjection?: boolean;
+}
+
+// 3. Component implementation
+export const NetWorthChart: React.FC<NetWorthChartProps> = ({
+  snapshots,
+  height = 300,
+  showProjection = true
+}) => {
+  // Hooks first
+  const [selectedPoint, setSelectedPoint] = useState<MonthlySnapshot | null>(null);
+  const { trendlineData } = usePortfolioStore();
+
+  // Effects after hooks
+  useEffect(() => {
+    // Effect logic
+  }, [snapshots]);
+
+  // Event handlers
+  const handlePointClick = (snapshot: MonthlySnapshot) => {
+    setSelectedPoint(snapshot);
+  };
+
+  // Render methods (if complex)
+  const renderTooltip = (props: any) => {
+    // Tooltip rendering logic
+  };
+
+  // Main render
+  return (
+    <div className="net-worth-chart">
+      {/* Component JSX */}
+    </div>
+  );
+};
+```
+
+### Hook Usage Patterns
+```typescript
+// Custom hooks for business logic
+export const usePortfolioCalculations = (portfolio: Portfolio) => {
+  const [calculations, setCalculations] = useState<CalculationResults | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  useEffect(() => {
+    const calculateData = async () => {
+      setIsCalculating(true);
+      try {
+        const results = await performCalculations(portfolio);
+        setCalculations(results);
+      } catch (error) {
+        console.error('Calculation error:', error);
+      } finally {
+        setIsCalculating(false);
+      }
+    };
+
+    if (portfolio) {
+      calculateData();
+    }
+  }, [portfolio]);
+
+  return { calculations, isCalculating };
+};
+
+// State management hooks
+export const useFormValidation = <T>(
+  initialValues: T,
+  validationSchema: ValidationSchema<T>
+) => {
+  const [values, setValues] = useState<T>(initialValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({});
+
+  // Validation logic
+  
+  return {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    isValid
+  };
+};
+```
+
+## Styling Standards
+
+### Tailwind CSS Guidelines
+```typescript
+// Use className composition for component variants
+const buttonClasses = {
+  base: 'px-4 py-2 rounded-md font-medium transition-colors duration-200',
+  variants: {
+    primary: 'bg-slate-600 text-white hover:bg-slate-700',
+    secondary: 'bg-white text-slate-600 border border-slate-300 hover:bg-slate-50',
+    danger: 'bg-rose-500 text-white hover:bg-rose-600'
+  },
+  sizes: {
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg'
+  }
+};
+
+// Component with composed classes
+const Button: React.FC<ButtonProps> = ({ variant = 'primary', size = 'md', className, ...props }) => {
+  const classes = cn(
+    buttonClasses.base,
+    buttonClasses.variants[variant],
+    buttonClasses.sizes[size],
+    className
+  );
+
+  return <button className={classes} {...props} />;
+};
+```
+
+### CSS Custom Properties
+```css
+/* Define custom properties for theme values */
+:root {
+  --color-primary: rgb(100 116 139);
+  --color-primary-hover: rgb(71 85 105);
+  --color-success: rgb(16 185 129);
+  --color-error: rgb(244 63 94);
+  
+  --spacing-unit: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --transition-duration: 200ms;
+}
+
+/* Use in Tailwind config */
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: 'var(--color-primary)',
+        'primary-hover': 'var(--color-primary-hover)'
+      }
+    }
+  }
+};
+```
+
+### Component Styling Patterns
+- **Composition over inheritance** for style variants
+- **Responsive design** using Tailwind breakpoints
+- **Consistent spacing** using the spacing scale
+- **Dark mode support** through CSS custom properties
+- **Animation consistency** using defined transition durations
+
+## Testing Standards
+
+### Unit Testing Patterns
+```typescript
+// Test file naming: ComponentName.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+
+import { NetWorthCalculator } from './NetWorthCalculator';
+import { mockPortfolioData } from '@/tests/mocks/portfolio-data';
+
+describe('NetWorthCalculator', () => {
+  // Test setup
+  const defaultProps = {
+    assets: mockPortfolioData.assets,
+    liabilities: mockPortfolioData.liabilities
+  };
+
+  // Clear mocks between tests
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('calculation accuracy', () => {
+    it('should calculate net worth correctly', () => {
+      const result = calculateNetWorth(defaultProps.assets, defaultProps.liabilities);
+      
+      expect(result).toBe(250000); // Expected net worth
+    });
+
+    it('should handle empty asset list', () => {
+      const result = calculateNetWorth([], defaultProps.liabilities);
+      
+      expect(result).toBeLessThan(0);
+    });
+  });
+
+  describe('component rendering', () => {
+    it('should display calculated net worth', () => {
+      render(<NetWorthCalculator {...defaultProps} />);
+      
+      expect(screen.getByText('$250,000')).toBeInTheDocument();
+    });
+
+    it('should show loading state during calculation', async () => {
+      render(<NetWorthCalculator {...defaultProps} />);
+      
+      expect(screen.getByText('Calculating...')).toBeInTheDocument();
+      
+      await waitFor(() => {
+        expect(screen.queryByText('Calculating...')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('user interactions', () => {
+    it('should update calculation when assets change', async () => {
+      const { rerender } = render(<NetWorthCalculator {...defaultProps} />);
+      
+      const updatedProps = {
+        ...defaultProps,
+        assets: [...defaultProps.assets, mockAsset]
+      };
+      
+      rerender(<NetWorthCalculator {...updatedProps} />);
+      
+      await waitFor(() => {
+        expect(screen.getByText('$300,000')).toBeInTheDocument();
+      });
+    });
+  });
+});
+```
+
+### Integration Testing
+```typescript
+// Test main process services
+import { PortfolioManager } from '@/main/services/portfolio-manager';
+import { FileSystemHandler } from '@/main/services/file-system-handler';
+
+describe('PortfolioManager Integration', () => {
+  let portfolioManager: PortfolioManager;
+  let fileSystemHandler: FileSystemHandler;
+
+  beforeEach(() => {
+    fileSystemHandler = new FileSystemHandler();
+    portfolioManager = new PortfolioManager(fileSystemHandler);
+  });
+
+  it('should save and load portfolio data correctly', async () => {
+    const portfolio = createMockPortfolio();
+    
+    await portfolioManager.savePortfolio(portfolio);
+    const loadedPortfolio = await portfolioManager.loadPortfolio(portfolio.id);
+    
+    expect(loadedPortfolio).toEqual(portfolio);
+  });
+});
+```
+
+### Testing Utilities
+```typescript
+// Custom render with providers
+export const renderWithProviders = (
+  ui: React.ReactElement,
+  options: RenderOptions = {}
+) => {
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <PortfolioProvider>
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
+    </PortfolioProvider>
+  );
+
+  return render(ui, { wrapper: Wrapper, ...options });
+};
+
+// Mock data factories
+export const createMockAsset = (overrides: Partial<Asset> = {}): Asset => ({
+  id: 'test-asset-id',
+  name: 'Test Asset',
+  category: AssetCategory.INVESTMENT,
+  currentValue: 50000,
+  isActive: true,
+  entries: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  version: 1,
+  ...overrides
+});
+```
+
+## Linting & Formatting
+
+### ESLint Configuration
+```json
+{
+  "extends": [
+    "@typescript-eslint/recommended",
+    "@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "prefer-const": "error",
+    "no-var": "error"
+  }
+}
+```
+
+### Prettier Configuration
+```json
+{
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "bracketSpacing": true,
+  "arrowParens": "avoid"
+}
+```
+
+### Import Organization
+```typescript
+// 1. React and core libraries
+import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+
+// 2. Third-party libraries
+import { LineChart, Line } from 'recharts';
+import { z } from 'zod';
+
+// 3. Internal imports (absolute paths)
+import { Asset, Portfolio } from '@/shared/types';
+import { usePortfolioStore } from '@/stores/portfolio';
+import { calculateNetWorth } from '@/utils/calculations';
+
+// 4. Relative imports
+import './ComponentName.css';
+```
+
+## Git & Version Control
+
+### Commit Message Format
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+### Commit Types
+- **feat**: New feature implementation
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Formatting, no code changes
+- **refactor**: Code changes without adding features or fixing bugs
+- **test**: Adding or updating tests
+- **chore**: Build process or auxiliary tool changes
+
+### Example Commit Messages
+```
+feat(dashboard): add net worth trend chart with projection
+
+- Implement Recharts line chart component
+- Calculate regression trendline for future projection
+- Add interactive tooltips with monthly details
+- Include responsive design for various screen sizes
+
+Closes #23
+```
+
+### Branch Naming
+- **Feature branches**: `feature/dashboard-chart-component`
+- **Bug fixes**: `fix/calculation-accuracy-issue`
+- **Documentation**: `docs/update-api-documentation`
+- **Refactoring**: `refactor/state-management-hooks`
+
+### Pull Request Guidelines
+1. **Clear description** of changes and reasoning
+2. **Link to related issues** using GitHub keywords
+3. **Include screenshots** for UI changes
+4. **Ensure tests pass** and coverage is maintained
+5. **Request appropriate reviewers** based on changed files
+6. **Keep changes focused** - one feature or fix per PR
+
+## Code Review Standards
+
+### Review Checklist
+- [ ] **Type safety**: All types properly defined and used
+- [ ] **Error handling**: Appropriate error boundaries and validation
+- [ ] **Performance**: No unnecessary re-renders or expensive operations
+- [ ] **Accessibility**: Proper ARIA labels and keyboard navigation
+- [ ] **Testing**: Adequate test coverage for new functionality
+- [ ] **Documentation**: Complex logic documented with comments
+- [ ] **Consistency**: Follows established patterns and conventions
+
+### Review Comments
+- **Be constructive** and explain the reasoning behind suggestions
+- **Ask questions** to understand the implementation approach
+- **Suggest alternatives** when appropriate
+- **Acknowledge good practices** and clean implementations
+- **Focus on maintainability** and future extensibility
+
+These coding standards ensure consistency, maintainability, and quality across the Momentum codebase while supporting team collaboration and long-term project success.

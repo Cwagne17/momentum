@@ -1,0 +1,78 @@
+# Momentum Builder Rules Index
+
+This directory contains the authoritative builder rules and specifications for the Momentum desktop application. These files serve as the ground truth for all development work and should be referenced by AI agents, developers, and builders before making any code changes.
+
+## Rule Files Overview
+
+### [01-tech-stack.mdc](./01-tech-stack.mdc)
+**Technology Stack & Architecture**
+- Electron + React + TypeScript foundation
+- File organization and project structure
+- Data persistence approach (JSON-based)
+- Chart and state management libraries
+- Build and development tooling
+
+### [02-design-system.mdc](./02-design-system.mdc)
+**Design System & Visual Standards**
+- Muted color palette for trustworthy fintech aesthetic
+- Typography hierarchy and font specifications
+- Component styles (cards, buttons, forms)
+- Chart and visualization guidelines
+- Icon system and accessibility requirements
+
+### [03-data-model.mdc](./03-data-model.mdc)
+**Data Model & Business Logic**
+- Authoritative data structures (Assets, Liabilities, Entries, Snapshots)
+- Financial calculations and formulas
+- Delta calculations and change tracking
+- Regression trendline algorithms
+- Data persistence patterns and validation
+
+### [04-ui-architecture.mdc](./04-ui-architecture.mdc)
+**User Interface Architecture**
+- Main application screens (Dashboard, Snapshots, Holdings)
+- State management architecture and data flow
+- Routing and navigation patterns
+- User interactions and workflows
+- Empty states and error handling
+
+### [05-coding-standards.mdc](./05-coding-standards.mdc)
+**Development Standards & Practices**
+- TypeScript configuration and coding conventions
+- Styling and CSS guidelines
+- Testing patterns and requirements
+- Linting and formatting rules
+- Commit messages and PR practices
+
+### [06-sources-and-grounding.mdc](./06-sources-and-grounding.mdc)
+**Sources of Truth & Grounding Requirements**
+- Primary specification sources (.kiro/specs/momentum-net-worth-tracker/ directory)
+- How to reference ground truth documents
+- Validation against requirements and design docs
+- Change approval and documentation processes
+
+### [07-tasks-and-scopes.mdc](./07-tasks-and-scopes.mdc)
+**Task Management & Scope Definition**
+- How to size and scope development tasks
+- Reference patterns for .kiro/specs/momentum-net-worth-tracker/tasks.md
+- Definition of "done" for various work types
+- Quality gates and acceptance criteria
+
+## Usage Guidelines
+
+1. **Always consult these rules** before beginning any development work
+2. **Reference ground truth sources** in .kiro/specs/momentum-net-worth-tracker/ directory for requirements
+3. **Validate changes** against both builder rules and specifications
+4. **Update rules** when architectural decisions change
+5. **Maintain consistency** across all development activities
+
+## Maintenance
+
+These rule files should be updated whenever:
+- Core architectural decisions change
+- New technologies are adopted
+- Design system evolves
+- Development practices are refined
+- Quality standards are updated
+
+Last updated: September 2025

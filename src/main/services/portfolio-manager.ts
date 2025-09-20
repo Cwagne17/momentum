@@ -11,9 +11,9 @@ import { FileSystemHandler } from './file-system-handler';
 import { SchemaValidator } from './schema-validator';
 
 export class PortfolioManager {
-    private fileSystemHandler: FileSystemHandler;
-    private schemaValidator: SchemaValidator;
-    private backupManager: BackupManager;
+    private readonly fileSystemHandler: FileSystemHandler;
+    private readonly schemaValidator: SchemaValidator;
+    private readonly backupManager: BackupManager;
 
     constructor() {
         this.fileSystemHandler = new FileSystemHandler();

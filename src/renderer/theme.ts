@@ -5,37 +5,37 @@ export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#0ea5e9', // primary-500 from Tailwind
-      light: '#38bdf8', // primary-400
-      dark: '#0284c7', // primary-600
+      main: '#2563eb', // modern blue
+      light: '#4f8efb',
+      dark: '#1247a8',
     },
     secondary: {
-      main: '#6b7280', // gray-500
-      light: '#9ca3af', // gray-400
-      dark: '#374151', // gray-700
+      main: '#64748b', // slate-400
+      light: '#94a3b8',
+      dark: '#334155',
     },
     success: {
-      main: '#22c55e', // success-500 from Tailwind
-      light: '#4ade80', // success-400
-      dark: '#16a34a', // success-600
+      main: '#10b981',
+      light: '#34d399',
+      dark: '#059669',
     },
     warning: {
-      main: '#f59e0b', // warning-500 from Tailwind
-      light: '#fbbf24', // warning-400
-      dark: '#d97706', // warning-600
+      main: '#f59e0b',
+      light: '#fbbf24',
+      dark: '#d97706',
     },
     error: {
-      main: '#ef4444', // error-500 from Tailwind
-      light: '#f87171', // error-400
-      dark: '#dc2626', // error-600
+      main: '#ef4444',
+      light: '#f87171',
+      dark: '#dc2626',
     },
     background: {
-      default: '#f9fafb', // gray-50
+      default: '#f3f6f9',
       paper: '#ffffff',
     },
     text: {
-      primary: '#111827', // gray-900
-      secondary: '#6b7280', // gray-500
+      primary: '#0f172a',
+      secondary: '#6b7280',
     },
   },
   typography: {

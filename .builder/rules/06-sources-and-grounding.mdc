@@ -1,0 +1,254 @@
+# Sources of Truth & Grounding Requirements
+
+## Overview
+
+All development work on Momentum must be grounded in the official project specifications located in the `.kiro/specs/momentum-net-worth-tracker/` directory. This document establishes the hierarchy of truth, validation processes, and mandatory referencing practices for AI agents, developers, and builders working on the project.
+
+## Primary Sources of Truth
+
+### Ground Truth Hierarchy (Descending Priority)
+
+1. **`.kiro/specs/momentum-net-worth-tracker/requirements.md`** - Functional Requirements
+   - **Purpose**: Defines what the application must do
+   - **Authority**: Product requirements and user stories
+   - **Scope**: Features, functionality, user workflows, business rules
+   - **Update Frequency**: Only when requirements change or are clarified
+
+2. **`.kiro/specs/momentum-net-worth-tracker/design.md`** - Design Specifications  
+   - **Purpose**: Defines how the application should look and behave
+   - **Authority**: Visual design, UX patterns, interaction design
+   - **Scope**: UI layouts, visual hierarchy, user experience flows
+   - **Update Frequency**: When design decisions are made or refined
+
+3. **`.kiro/specs/momentum-net-worth-tracker/tasks.md`** - Implementation Tasks
+   - **Purpose**: Defines current and planned development work
+   - **Authority**: Project management and development priorities
+   - **Scope**: Sprint planning, task breakdown, acceptance criteria
+   - **Update Frequency**: Continuously updated as work progresses
+
+4. **`.builder/rules/`** - Builder Rules (This Directory)
+   - **Purpose**: Technical implementation guidelines and standards
+   - **Authority**: Development best practices and architectural decisions
+   - **Scope**: Code standards, patterns, technical constraints
+   - **Update Frequency**: When technical standards evolve
+
+## Mandatory Grounding Process
+
+### For AI Agents (Copilot, Builder, etc.)
+
+#### Before Any Code Generation
+1. **ALWAYS read `.kiro/specs/momentum-net-worth-tracker/requirements.md`** to understand functional requirements
+2. **ALWAYS read `.kiro/specs/momentum-net-worth-tracker/design.md`** to understand design intentions
+3. **ALWAYS check `.kiro/specs/momentum-net-worth-tracker/tasks.md`** for current task context and priorities
+4. **Reference relevant builder rules** from `.builder/rules/` directory
+
+#### During Development
+```typescript
+// Example: Before implementing a new feature
+// 1. Validate against requirements
+if (!isFeatureInRequirements(featureName)) {
+  throw new Error('Feature not specified in .kiro/specs/momentum-net-worth-tracker/requirements.md');
+}
+
+// 2. Check design specifications
+const designSpecs = getDesignSpecifications(featureName);
+if (!designSpecs) {
+  requestDesignGuidance(featureName);
+}
+
+// 3. Verify task alignment
+const currentTasks = getCurrentTasks();
+if (!currentTasks.includes(featureName)) {
+  confirmTaskPriority(featureName);
+}
+```
+
+#### Code Generation Rules
+- **No features** may be implemented that are not documented in `.kiro/specs/momentum-net-worth-tracker/requirements.md`
+- **No UI elements** may be created without design guidance from `.kiro/specs/momentum-net-worth-tracker/design.md`
+- **All implementations** must align with current tasks in `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+- **Technical approaches** must follow patterns established in `.builder/rules/`
+
+### For Human Developers
+
+#### Pre-Development Checklist
+- [ ] Read relevant sections of `.kiro/specs/momentum-net-worth-tracker/requirements.md`
+- [ ] Review applicable design specifications in `.kiro/specs/momentum-net-worth-tracker/design.md`
+- [ ] Confirm task details and acceptance criteria in `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+- [ ] Review applicable builder rules in `.builder/rules/`
+- [ ] Validate understanding with team lead or product owner
+
+#### Implementation Validation
+- [ ] Feature aligns with documented requirements
+- [ ] UI matches design specifications
+- [ ] Code follows established technical standards
+- [ ] Changes are within scope of assigned tasks
+- [ ] Documentation is updated if specifications change
+
+## Reference Patterns
+
+### Documentation References
+When referencing ground truth documents in code or commits:
+
+```typescript
+/**
+ * Implements net worth calculation per requirements in .kiro/specs/momentum-net-worth-tracker/requirements.md
+ * Section: "Financial Calculations"
+ * 
+ * Design follows layout specified in .kiro/specs/momentum-net-worth-tracker/design.md
+ * Section: "Dashboard Layout - Net Worth Display"
+ */
+function calculateNetWorth(assets: Asset[], liabilities: Liability[]): number {
+  // Implementation follows .builder/rules/03-data-model.mdc
+  return assets.reduce((sum, asset) => sum + asset.currentValue, 0) -
+         liabilities.reduce((sum, liability) => sum + liability.currentBalance, 0);
+}
+```
+
+### Commit Message References
+```
+feat(dashboard): implement net worth display
+
+Implements net worth calculation and display per:
+- Requirements: .kiro/specs/momentum-net-worth-tracker/requirements.md (Financial Dashboard section)
+- Design: .kiro/specs/momentum-net-worth-tracker/design.md (Dashboard Layout specifications)  
+- Task: .kiro/specs/momentum-net-worth-tracker/tasks.md (Task #12: Dashboard Implementation)
+
+Follows technical standards from .builder/rules/03-data-model.mdc
+```
+
+### Pull Request Templates
+```markdown
+## Grounding Validation
+
+- [ ] **Requirements**: Changes align with `.kiro/specs/momentum-net-worth-tracker/requirements.md`
+  - Relevant sections: [list sections]
+  - Requirements addressed: [list requirements]
+
+- [ ] **Design**: Implementation follows `.kiro/specs/momentum-net-worth-tracker/design.md`
+  - Design sections referenced: [list sections]
+  - UI components match specifications: [yes/no]
+
+- [ ] **Tasks**: Work completed per `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+  - Tasks addressed: [list task numbers/names]
+  - Acceptance criteria met: [yes/no]
+
+- [ ] **Technical Standards**: Code follows `.builder/rules/`
+  - Applicable rules: [list rule files]
+  - Standards compliance verified: [yes/no]
+```
+
+## Validation Processes
+
+### Automated Validation
+```typescript
+// Pre-commit hook validation
+const validateGrounding = async () => {
+  const changedFiles = await getChangedFiles();
+  
+  for (const file of changedFiles) {
+    if (isImplementationFile(file)) {
+      await validateAgainstRequirements(file);
+      await validateAgainstDesign(file);
+      await validateAgainstTasks(file);
+    }
+  }
+};
+
+// CI/CD pipeline checks
+const runGroundingChecks = () => {
+  checkRequirementsAlignment();
+  checkDesignCompliance();
+  checkTaskCompletion();
+  checkTechnicalStandards();
+};
+```
+
+### Manual Review Process
+1. **Peer Review**: Another developer validates grounding
+2. **Design Review**: Designer confirms UI alignment with specifications
+3. **Product Review**: Product owner confirms requirements alignment
+4. **Technical Review**: Tech lead confirms architectural compliance
+
+## Change Management
+
+### Updating Ground Truth Documents
+
+#### Requirements Changes (`.kiro/specs/momentum-net-worth-tracker/requirements.md`)
+- **Who**: Product Owner or designated stakeholder
+- **Process**: 
+  1. Document change rationale
+  2. Update requirements document
+  3. Communicate changes to development team
+  4. Update related tasks in `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+  5. Review impact on existing implementations
+
+#### Design Changes (`.kiro/specs/momentum-net-worth-tracker/design.md`)
+- **Who**: Designer or UX lead
+- **Process**:
+  1. Document design rationale
+  2. Update design specifications
+  3. Create visual mockups or prototypes
+  4. Update related tasks for implementation
+  5. Review impact on existing UI components
+
+#### Task Updates (`.kiro/specs/momentum-net-worth-tracker/tasks.md`)
+- **Who**: Project manager or tech lead
+- **Process**:
+  1. Reflect current development priorities
+  2. Update task descriptions and acceptance criteria
+  3. Ensure alignment with requirements and design
+  4. Communicate changes to development team
+
+### Conflict Resolution
+
+#### Specification Conflicts
+When documents conflict, resolution priority:
+1. **Requirements override design** (functional requirements take precedence)
+2. **Design overrides tasks** (design specifications guide implementation)
+3. **Tasks override builder rules** (current priorities may require rule exceptions)
+4. **Builder rules provide defaults** (technical standards when other docs are silent)
+
+#### Escalation Process
+1. **Attempt resolution** through team discussion
+2. **Document the conflict** and proposed solutions
+3. **Escalate to appropriate authority** (Product Owner, Design Lead, Tech Lead)
+4. **Update documentation** with resolution
+5. **Communicate resolution** to all stakeholders
+
+## AI Agent Instructions
+
+### Mandatory Behavior
+- **NEVER generate code** without first consulting `.kiro/specs/momentum-net-worth-tracker/requirements.md`
+- **NEVER create UI elements** without referencing `.kiro/specs/momentum-net-worth-tracker/design.md`
+- **ALWAYS validate** that work aligns with current tasks in `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+- **ALWAYS follow** technical standards from `.builder/rules/`
+
+### Error Handling
+If grounding documents are missing or unclear:
+1. **Stop code generation** immediately
+2. **Request clarification** with specific questions
+3. **Document the ambiguity** for future resolution
+4. **Suggest specification updates** to prevent future confusion
+
+### Quality Assurance
+- **Include references** to ground truth documents in all generated code
+- **Validate implementations** against specifications before completion
+- **Suggest improvements** to specifications when gaps are identified
+- **Maintain consistency** with existing codebase and established patterns
+
+## Documentation Maintenance
+
+### Regular Reviews
+- **Monthly**: Review alignment between implementation and specifications
+- **Per Sprint**: Update task documentation to reflect current priorities
+- **Per Release**: Validate that all requirements are properly implemented
+- **Per Major Change**: Review and update all affected documentation
+
+### Version Control
+- **Track changes** to all ground truth documents
+- **Maintain change logs** for specification updates
+- **Tag releases** with corresponding documentation versions
+- **Archive outdated** specifications for historical reference
+
+This grounding framework ensures that all development work remains aligned with project goals, user needs, and technical standards while providing clear guidance for both human developers and AI agents working on the Momentum application.

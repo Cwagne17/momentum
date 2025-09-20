@@ -1,0 +1,296 @@
+# User Interface Architecture
+
+## Application Structure
+
+Momentum follows a clean, three-screen architecture focused on the core user workflows: viewing financial status, managing monthly snapshots, and maintaining holdings.
+
+### Screen Hierarchy
+```
+Momentum Desktop App
+├── Dashboard (Default View)
+│   ├── Net Worth Overview
+│   ├── Monthly Change Summary
+│   ├── Asset/Liability Breakdown
+│   └── Trend Chart with Projections
+├── Snapshots (Historical View)
+│   ├── Monthly Timeline
+│   ├── Detailed Monthly Breakdowns
+│   ├── Comparison Tools
+│   └── Note Management
+└── Holdings (Management View)
+    ├── Assets Management
+    ├── Liabilities Management
+    ├── Category Organization
+    └── Bulk Import/Export
+```
+
+## Screen Specifications
+
+### Dashboard Screen
+**Purpose**: Primary view showing current financial status and trends
+
+#### Layout Structure
+```
+┌─────────────────────────────────────────────────┐
+│ Header: Net Worth + Monthly Change              │
+├─────────────────────────────────────────────────┤
+│ Main Chart: Net Worth Trend (12-24 months)     │
+├─────────────────────────────────────────────────┤
+│ Assets Summary │ Liabilities Summary │ Actions  │
+│ (Card)         │ (Card)             │ (Card)   │
+└─────────────────────────────────────────────────┘
+```
+
+#### Key Components
+- **Net Worth Header**: Large, prominent display of current net worth
+- **Change Indicator**: Monthly change with color-coded trend (green/red)
+- **Trend Chart**: Recharts line chart with trendline projection
+- **Summary Cards**: Asset/liability totals with category breakdowns
+- **Quick Actions**: Add holding, create snapshot, export data
+
+#### State Requirements
+```typescript
+interface DashboardState {
+  currentNetWorth: number;
+  monthlyChange: number;
+  monthlyChangePercent: number;
+  trendData: ChartDataPoint[];
+  assetSummary: CategorySummary[];
+  liabilitySummary: CategorySummary[];
+  isLoading: boolean;
+  lastUpdated: Date;
+}
+```
+
+### Snapshots Screen
+**Purpose**: Historical view and monthly data management
+
+#### Layout Structure
+```
+┌─────────────────────────────────────────────────┐
+│ Timeline Navigation (Horizontal Scroll)        │
+├─────────────────────────────────────────────────┤
+│ Selected Month Details                          │
+│ ┌─────────────┬─────────────┬─────────────┐     │
+│ │ Net Worth   │ Assets      │ Liabilities │     │
+│ │ Summary     │ Breakdown   │ Breakdown   │     │
+│ └─────────────┴─────────────┴─────────────┘     │
+├─────────────────────────────────────────────────┤
+│ Monthly Notes & Actions                         │
+└─────────────────────────────────────────────────┘
+```
+
+#### Key Components
+- **Timeline Slider**: Horizontal month selector with visual indicators
+- **Month Detail Cards**: Breakdown of selected month's data
+- **Change Indicators**: Month-over-month comparisons
+- **Notes Section**: Monthly observations and context
+- **Action Buttons**: Edit snapshot, add note, compare months
+
+#### State Requirements
+```typescript
+interface SnapshotsState {
+  selectedMonth: Date;
+  monthlySnapshots: MonthlySnapshot[];
+  selectedSnapshot: MonthlySnapshot | null;
+  comparisonMonth?: Date;
+  isEditingNotes: boolean;
+  timelineRange: [Date, Date];
+}
+```
+
+### Holdings Screen
+**Purpose**: Asset and liability management interface
+
+#### Layout Structure
+```
+┌─────────────────────────────────────────────────┐
+│ Tab Navigation: Assets | Liabilities            │
+├─────────────────────────────────────────────────┤
+│ Filters & Search                                │
+├─────────────────────────────────────────────────┤
+│ Holdings Table                                  │
+│ ┌──────┬────────────┬──────────┬──────────┐     │
+│ │ Name │ Category   │ Value    │ Actions  │     │
+│ │      │            │          │          │     │
+│ └──────┴────────────┴──────────┴──────────┘     │
+├─────────────────────────────────────────────────┤
+│ Add New + Bulk Actions                          │
+└─────────────────────────────────────────────────┘
+```
+
+#### Key Components
+- **Tab Navigation**: Switch between Assets and Liabilities
+- **Filter Controls**: Category, active status, value range filters
+- **Search Bar**: Real-time text search across holdings
+- **Data Table**: Sortable, selectable table with inline editing
+- **Action Bar**: Add new, bulk edit, import/export functions
+
+#### State Requirements
+```typescript
+interface HoldingsState {
+  activeTab: 'assets' | 'liabilities';
+  assets: Asset[];
+  liabilities: Liability[];
+  filteredItems: (Asset | Liability)[];
+  selectedItems: string[];
+  filters: {
+    category?: string;
+    isActive?: boolean;
+    searchTerm: string;
+    valueRange?: [number, number];
+  };
+  sortConfig: {
+    field: string;
+    direction: 'asc' | 'desc';
+  };
+  editingItem?: Asset | Liability;
+}
+```
+
+## Application State Architecture
+
+### Global State (Zustand Store)
+```typescript
+interface AppState {
+  // Portfolio Data
+  portfolio: Portfolio | null;
+  
+  // UI State
+  currentScreen: 'dashboard' | 'snapshots' | 'holdings';
+  sidebarCollapsed: boolean;
+  theme: 'light' | 'dark';
+  
+  // Loading States
+  isLoading: boolean;
+  loadingMessage?: string;
+  
+  // Error Handling
+  error: string | null;
+  
+  // Actions
+  loadPortfolio: (id: string) => Promise<void>;
+  updatePortfolio: (updates: Partial<Portfolio>) => Promise<void>;
+  addAsset: (asset: Omit<Asset, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addLiability: (liability: Omit<Liability, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  createSnapshot: (date: Date, notes?: string) => Promise<void>;
+  setCurrentScreen: (screen: string) => void;
+  setError: (error: string | null) => void;
+}
+```
+
+### Screen-Specific State
+Each screen maintains its own local state for UI-specific concerns while accessing shared portfolio data from the global store.
+
+## Routing & Navigation
+
+### Route Structure
+```typescript
+const routes = {
+  '/': 'dashboard',
+  '/snapshots': 'snapshots',
+  '/snapshots/:month': 'snapshots',
+  '/holdings': 'holdings',
+  '/holdings/:tab': 'holdings',
+  '/settings': 'settings'
+};
+```
+
+### Navigation Components
+- **Sidebar Navigation**: Fixed left sidebar with main navigation links
+- **Breadcrumb Navigation**: Context-aware breadcrumbs for deep navigation
+- **Tab Navigation**: Within-screen tab switching (e.g., Assets/Liabilities)
+
+## User Interactions & Workflows
+
+### Primary User Flows
+
+#### Monthly Update Workflow
+1. **Navigate to Holdings** → Review current values
+2. **Update Asset/Liability Values** → Inline editing or bulk import
+3. **Create Monthly Snapshot** → Automatic calculation with optional notes
+4. **Review Dashboard** → Verify changes and trends
+
+#### Analysis Workflow
+1. **View Dashboard** → Current status and trends
+2. **Navigate to Snapshots** → Historical analysis
+3. **Compare Months** → Side-by-side comparisons
+4. **Export Data** → For external analysis
+
+#### Portfolio Management Workflow
+1. **Add New Holdings** → Asset or liability creation
+2. **Categorize Items** → Proper classification
+3. **Set Up Tracking** → Historical data entry
+4. **Monitor Performance** → Regular updates and analysis
+
+### Interaction Patterns
+
+#### Data Entry
+- **Inline Editing**: Click-to-edit for quick value updates
+- **Modal Forms**: Detailed forms for creating/editing holdings
+- **Bulk Operations**: Multi-select for batch operations
+- **Drag & Drop**: File import for CSV/JSON data
+
+#### Data Visualization
+- **Interactive Charts**: Hover states, zoom, time range selection
+- **Responsive Tables**: Sorting, filtering, pagination
+- **Progressive Disclosure**: Expand/collapse for detailed views
+- **Contextual Actions**: Hover menus and right-click options
+
+## Empty States & Error Handling
+
+### Empty States
+
+#### New User Experience
+- **Welcome Screen**: Introduction to Momentum with setup guidance
+- **Empty Portfolio**: Friendly illustration with "Add your first asset" CTA
+- **No Snapshots**: Historical view explaining the monthly snapshot concept
+- **Empty Categories**: Guidance on organizing holdings by category
+
+#### Content Guidelines
+- **Helpful Imagery**: Simple, encouraging illustrations
+- **Clear Actions**: Prominent buttons to resolve empty state
+- **Educational Content**: Brief explanations of features and benefits
+- **Progress Indicators**: Show completion status for setup tasks
+
+### Error Handling
+
+#### Error Types
+- **Network Errors**: File system access issues
+- **Validation Errors**: Invalid data entry
+- **Calculation Errors**: Mathematical operation failures
+- **Import Errors**: File format or data issues
+
+#### Error Presentation
+- **Toast Notifications**: Non-blocking errors and confirmations
+- **Inline Validation**: Real-time form validation feedback
+- **Error Pages**: Full-screen errors with recovery options
+- **Contextual Messages**: Specific guidance for resolution
+
+#### Recovery Mechanisms
+- **Retry Actions**: Automatic retry for transient failures
+- **Fallback Content**: Graceful degradation when data unavailable
+- **Undo Operations**: Reversible actions where possible
+- **Backup Restore**: Recovery from data corruption
+
+## Performance Considerations
+
+### Rendering Optimization
+- **Virtual Scrolling**: Large data tables and lists
+- **Memoization**: Expensive calculations and derived data
+- **Lazy Loading**: Route-based code splitting
+- **Debounced Inputs**: Search and filter operations
+
+### Data Management
+- **Selective Loading**: Load only required date ranges
+- **Incremental Updates**: Patch-based state updates
+- **Background Processing**: Heavy calculations off main thread
+- **Caching Strategy**: Intelligent data caching with invalidation
+
+### User Experience
+- **Loading States**: Progressive loading with skeletons
+- **Optimistic Updates**: Immediate UI feedback
+- **Smooth Transitions**: 200ms animations for state changes
+- **Responsive Design**: Fluid layouts and flexible grids
+
+This UI architecture provides a solid foundation for building an intuitive, performant financial tracking application that scales with user needs while maintaining simplicity and usability.

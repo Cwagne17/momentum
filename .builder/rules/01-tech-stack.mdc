@@ -1,0 +1,157 @@
+# Technology Stack & Architecture
+
+## Core Technology Stack
+
+### Primary Framework
+- **Electron**: Desktop application framework
+- **React 18+**: User interface library with hooks and modern patterns
+- **TypeScript 5+**: Primary development language with strict type checking
+- **Node.js**: Runtime for main process and build tools
+
+### State Management
+- **Zustand**: Lightweight state management for React
+  - Simple, boilerplate-free state management
+  - TypeScript-first with excellent type inference
+  - Suitable for the app's moderate complexity
+  - Persistence middleware for state hydration
+
+### Data Visualization
+- **Recharts**: React-based charting library
+  - Native React components for line charts, bar charts
+  - Customizable styling to match design system
+  - Responsive and accessible chart components
+  - Integration with muted color palette
+
+### Styling & UI
+- **Tailwind CSS**: Utility-first CSS framework
+  - Consistent spacing, typography, and color system
+  - Custom design tokens for muted palette
+  - Responsive design utilities
+  - Component composition patterns
+
+### Data Persistence
+- **JSON Files**: Simple, transparent data storage
+  - Human-readable format for debugging
+  - Version control friendly
+  - Easy backup and restore
+  - Electron-based file system access
+  - No external database dependencies
+
+### Development Tools
+- **Vite**: Build tool and development server
+- **Electron Builder**: Application packaging and distribution
+- **Jest**: Unit testing framework
+- **ESLint**: Code linting and style enforcement
+- **Prettier**: Code formatting
+- **TypeScript Compiler**: Type checking and compilation
+
+## Project Structure
+
+```
+momentum/
+├── src/
+│   ├── main/                 # Electron main process
+│   │   ├── main.ts          # Application entry point
+│   │   ├── preload.ts       # Secure context bridge
+│   │   └── services/        # Backend services
+│   ├── renderer/            # React application
+│   │   ├── src/             # React components
+│   │   ├── App.tsx          # Root component
+│   │   └── main.tsx         # React entry point
+│   └── shared/              # Shared types and utilities
+│       ├── types/           # TypeScript type definitions
+│       └── utils/           # Common utilities
+├── tests/                   # Test files
+├── .builder/                # Builder rules and specs
+└── .kiro/specs/momentum-net-worth-tracker/                   # Requirements and design docs
+```
+
+## File Organization Principles
+
+### Main Process (`src/main/`)
+- **Single responsibility**: Each service handles one domain
+- **Type safety**: All APIs strongly typed
+- **Error handling**: Consistent error boundaries
+- **Security**: Principle of least privilege
+
+### Renderer Process (`src/renderer/`)
+- **Component hierarchy**: Logical nesting and composition
+- **Hook patterns**: Custom hooks for business logic
+- **State colocation**: Keep state close to where it's used
+- **Performance**: Lazy loading and memoization where appropriate
+
+### Shared Code (`src/shared/`)
+- **Type definitions**: Single source of truth for data structures
+- **Utilities**: Pure functions, no side effects
+- **Constants**: Application-wide configuration
+- **Validation**: Schema validation and data integrity
+
+### Testing (`tests/`)
+- **Mirror structure**: Test files mirror source structure
+- **Unit tests**: Focus on business logic and utilities
+- **Integration tests**: Test main process services
+- **Mock data**: Realistic test fixtures
+
+## Build & Development
+
+### Development Workflow
+1. **Hot reload**: Vite provides fast development feedback
+2. **Type checking**: Real-time TypeScript validation
+3. **Linting**: Automatic code quality checks
+4. **Testing**: Watch mode for continuous testing
+
+### Build Process
+1. **TypeScript compilation**: Source code compilation
+2. **Vite bundling**: Optimized renderer bundle
+3. **Electron packaging**: Cross-platform executable
+4. **Code signing**: Application security (future)
+
+### Environment Configuration
+- **Development**: Local file system, debug logging
+- **Production**: Sandboxed file access, error reporting
+- **Testing**: In-memory data, mock services
+
+## Security Considerations
+
+### Electron Security
+- **Context isolation**: Strict separation between main and renderer
+- **Preload scripts**: Secure API exposure
+- **Node integration disabled**: Renderer runs in browser-like environment
+- **Content Security Policy**: Restrict resource loading
+
+### Data Security
+- **Local storage only**: No cloud dependencies
+- **File permissions**: Appropriate OS-level restrictions
+- **Input validation**: All user data validated
+- **Backup encryption**: Future consideration for sensitive data
+
+## Performance Guidelines
+
+### Memory Management
+- **State cleanup**: Proper component unmounting
+- **Event listeners**: Remove listeners on cleanup
+- **File handles**: Close files after operations
+- **Chart rendering**: Optimize large datasets
+
+### Responsiveness
+- **Async operations**: Non-blocking file I/O
+- **Progressive loading**: Lazy load historical data
+- **Debounced inputs**: Reduce unnecessary calculations
+- **Efficient updates**: Minimize re-renders
+
+## Future Technology Considerations
+
+### Potential Additions
+- **Electron updater**: Automatic application updates
+- **Native menus**: OS-integrated menu system
+- **System notifications**: Portfolio milestone alerts
+- **Export capabilities**: PDF/CSV data export
+- **Backup automation**: Scheduled data backups
+
+### Migration Paths
+- **Database migration**: SQLite for complex queries (if needed)
+- **Cloud sync**: Optional encrypted cloud backup
+- **Mobile companion**: React Native app for viewing
+- **Web version**: Browser-based read-only dashboard
+
+This technology stack provides a solid foundation for a desktop financial tracking application while maintaining simplicity, type safety, and user control over their data.

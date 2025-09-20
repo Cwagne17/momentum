@@ -1,0 +1,338 @@
+# Task Management & Scope Definition
+
+## Overview
+
+Effective task management is critical for the successful development of Momentum. This document establishes guidelines for sizing tasks, defining scope boundaries, referencing the master task list, and determining when work is complete.
+
+## Task Sizing Framework
+
+### Size Categories
+
+#### XS Tasks (1-2 hours)
+**Definition**: Simple, isolated changes with minimal complexity
+- Single function implementation
+- CSS styling adjustments
+- Configuration updates
+- Documentation fixes
+- Simple bug fixes
+
+**Examples**:
+- Update color values in theme configuration
+- Add a new utility function with tests
+- Fix typo in user interface text
+- Add missing TypeScript types
+- Update README section
+
+**Acceptance Criteria**:
+- One clear, specific deliverable
+- No dependencies on other work
+- Can be completed in single session
+- Minimal testing requirements
+
+#### S Tasks (2-8 hours)
+**Definition**: Small features or fixes requiring some research or coordination
+- Simple React component creation
+- Basic form implementation
+- Unit test suite for existing function
+- Performance optimization for specific area
+- Refactoring of single module
+
+**Examples**:
+- Create currency formatting utility with tests
+- Implement basic asset category selector component
+- Add validation for portfolio data entry
+- Optimize chart rendering performance
+- Refactor file system service methods
+
+**Acceptance Criteria**:
+- 2-3 specific deliverables
+- May have 1-2 minor dependencies
+- Requires some design or architectural decisions
+- Includes comprehensive testing
+
+#### M Tasks (1-3 days)
+**Definition**: Medium features requiring design and implementation across multiple components
+- Complex React component with state management
+- Integration between main and renderer processes
+- Data model changes with migration
+- Feature implementation with multiple screens
+- Significant refactoring across modules
+
+**Examples**:
+- Implement monthly snapshot creation workflow
+- Build asset/liability management table with sorting/filtering
+- Create chart component with interactive features
+- Implement data import/export functionality
+- Add user preferences and settings management
+
+**Acceptance Criteria**:
+- 3-5 specific deliverables
+- Multiple dependencies and integration points
+- Requires design review and technical planning
+- Includes integration testing
+- May require database/file format changes
+
+#### L Tasks (3-7 days)
+**Definition**: Large features requiring significant design, implementation, and coordination
+- Complete screen implementation with all interactions
+- Major architectural changes
+- Complex business logic with edge cases
+- Performance optimization across application
+- Major UI/UX overhaul
+
+**Examples**:
+- Implement complete Dashboard screen with all charts and interactions
+- Build portfolio backup and restore system
+- Create comprehensive error handling and recovery system
+- Implement accessibility compliance across application
+- Build automated testing and CI/CD pipeline
+
+**Acceptance Criteria**:
+- 5-10 specific deliverables
+- Many dependencies requiring careful coordination
+- Requires design, technical, and product review
+- Includes end-to-end testing
+- May span multiple development areas
+
+#### XL Tasks (1-2 weeks)
+**Definition**: Epic-level features requiring significant planning and multi-phase implementation
+- Complete application features from design to deployment
+- Major architectural overhauls
+- New technology integration
+- Security implementation
+- Multi-platform support
+
+**Examples**:
+- Implement complete Holdings management system
+- Build comprehensive data visualization suite
+- Add cloud synchronization capabilities
+- Implement application security and encryption
+- Create mobile companion application
+
+**Acceptance Criteria**:
+- 10+ specific deliverables
+- Complex dependencies requiring project management
+- Requires stakeholder review and approval
+- Includes comprehensive testing at all levels
+- Often broken into smaller tasks for implementation
+
+## Task Definition Template
+
+### Standard Task Structure
+```markdown
+## Task Title: [Descriptive Name]
+
+**Size**: [XS/S/M/L/XL]
+**Priority**: [High/Medium/Low]
+**Dependencies**: [List any blocking tasks]
+**Assignee**: [Team member or open]
+
+### Description
+[Clear description of what needs to be accomplished]
+
+### Requirements Reference
+- **Functional**: .kiro/specs/momentum-net-worth-tracker/requirements.md - [Section/Feature]
+- **Design**: .kiro/specs/momentum-net-worth-tracker/design.md - [Section/Component]
+- **Technical**: .builder/rules/[relevant-rule-file.mdc]
+
+### Acceptance Criteria
+- [ ] [Specific deliverable 1]
+- [ ] [Specific deliverable 2]
+- [ ] [Specific deliverable 3]
+- [ ] Tests written and passing
+- [ ] Documentation updated
+- [ ] Code review completed
+
+### Implementation Notes
+[Technical considerations, constraints, or guidance]
+
+### Testing Requirements
+[Specific testing that must be completed]
+
+### Definition of Done
+[Specific criteria for task completion]
+```
+
+## Referencing .kiro/specs/momentum-net-worth-tracker/tasks.md
+
+### Master Task List Structure
+The `.kiro/specs/momentum-net-worth-tracker/tasks.md` file serves as the single source of truth for all project tasks and should be structured as follows:
+
+```markdown
+# Momentum Development Tasks
+
+## Current Sprint (Dates)
+### In Progress
+- [ ] Task 1 (Assigned to: Name, Size: M)
+- [ ] Task 2 (Assigned to: Name, Size: S)
+
+### Ready for Development
+- [ ] Task 3 (Size: L, Dependencies: Task 1)
+- [ ] Task 4 (Size: M, No dependencies)
+
+### Blocked
+- [ ] Task 5 (Blocked by: External dependency)
+
+## Backlog
+### High Priority
+- [ ] Feature A implementation
+- [ ] Critical bug fixes
+
+### Medium Priority
+- [ ] Enhancement B
+- [ ] Technical debt items
+
+### Low Priority
+- [ ] Nice-to-have features
+- [ ] Future considerations
+```
+
+### Task Reference Patterns
+When referencing tasks in code, commits, or documentation:
+
+```typescript
+/**
+ * Implements net worth calculation feature
+ * 
+ * Task Reference: .kiro/specs/momentum-net-worth-tracker/tasks.md - "Dashboard Net Worth Display" (Task #12)
+ * Requirements: .kiro/specs/momentum-net-worth-tracker/requirements.md - "Financial Calculations"
+ * Design: .kiro/specs/momentum-net-worth-tracker/design.md - "Dashboard Layout"
+ */
+export const calculateNetWorth = (assets: Asset[], liabilities: Liability[]): number => {
+  // Implementation
+};
+```
+
+```bash
+# Commit message referencing tasks
+git commit -m "feat(dashboard): implement net worth display
+
+Completes Task #12 from .kiro/specs/momentum-net-worth-tracker/tasks.md
+- Add net worth calculation function
+- Create dashboard display component  
+- Include month-over-month change indicator
+
+Requirements: .kiro/specs/momentum-net-worth-tracker/requirements.md (Dashboard section)
+Design: .kiro/specs/momentum-net-worth-tracker/design.md (Net Worth Display)"
+```
+
+## Definition of "Done"
+
+### Universal Done Criteria
+Every task, regardless of size, must meet these basic criteria:
+
+#### Code Quality
+- [ ] **TypeScript compliance**: No type errors or warnings
+- [ ] **Linting compliance**: Passes ESLint with project configuration
+- [ ] **Code formatting**: Formatted with Prettier
+- [ ] **Code review**: At least one peer review completed
+- [ ] **Naming conventions**: Follows established naming patterns
+
+#### Testing Requirements
+- [ ] **Unit tests**: Written for all new functions and components
+- [ ] **Integration tests**: Added for cross-module interactions
+- [ ] **Test coverage**: Maintains or improves overall coverage
+- [ ] **Manual testing**: Feature tested in development environment
+- [ ] **Regression testing**: Existing functionality still works
+
+#### Documentation
+- [ ] **Code documentation**: Complex logic documented with comments
+- [ ] **API documentation**: New interfaces and functions documented
+- [ ] **User documentation**: User-facing features documented
+- [ ] **Technical documentation**: Architecture changes documented
+
+#### Grounding & Compliance
+- [ ] **Requirements alignment**: Implementation matches requirements
+- [ ] **Design compliance**: UI matches design specifications
+- [ ] **Technical standards**: Follows coding standards and patterns
+- [ ] **Accessibility**: Meets accessibility requirements where applicable
+
+### Size-Specific Done Criteria
+
+#### XS/S Tasks Additional Criteria
+- [ ] **Single focus**: Addresses only the specified deliverable
+- [ ] **No breaking changes**: Maintains backward compatibility
+- [ ] **Quick verification**: Can be verified in under 15 minutes
+
+#### M Tasks Additional Criteria
+- [ ] **Integration verification**: Works correctly with existing systems
+- [ ] **Performance impact**: No significant performance degradation
+- [ ] **Error handling**: Includes appropriate error handling
+- [ ] **Edge case coverage**: Handles expected edge cases
+
+#### L/XL Tasks Additional Criteria
+- [ ] **End-to-end testing**: Complete user workflows tested
+- [ ] **Performance testing**: Meets performance requirements
+- [ ] **Security review**: Security implications considered and addressed
+- [ ] **Stakeholder approval**: Approved by product owner or designer
+- [ ] **Migration plan**: Data/system migration completed if required
+
+## Task Lifecycle Management
+
+### Task States
+1. **Backlog**: Task identified but not yet prioritized
+2. **Ready**: Task prioritized and ready for assignment
+3. **In Progress**: Task actively being worked on
+4. **Review**: Task completed, awaiting review
+5. **Testing**: Task in testing phase
+6. **Done**: Task completed and meets all done criteria
+7. **Blocked**: Task cannot proceed due to dependencies
+
+### State Transitions
+```mermaid
+graph LR
+    A[Backlog] --> B[Ready]
+    B --> C[In Progress]
+    C --> D[Review]
+    D --> E[Testing]
+    E --> F[Done]
+    C --> G[Blocked]
+    G --> C
+    D --> C
+    E --> C
+```
+
+### Progress Tracking
+- **Daily Updates**: Update task status daily in `.kiro/specs/momentum-net-worth-tracker/tasks.md`
+- **Blocker Identification**: Immediately flag blocked tasks
+- **Dependency Management**: Track and communicate dependency changes
+- **Completion Verification**: Verify done criteria before marking complete
+
+## Quality Gates
+
+### Pre-Development Gates
+- [ ] Task is properly sized and scoped
+- [ ] Requirements are clear and documented
+- [ ] Design specifications are available
+- [ ] Dependencies are identified and resolved
+- [ ] Acceptance criteria are specific and testable
+
+### Development Gates
+- [ ] Implementation follows architectural patterns
+- [ ] Code meets quality standards
+- [ ] Tests are written and passing
+- [ ] Documentation is updated
+- [ ] Integration points are verified
+
+### Completion Gates
+- [ ] All acceptance criteria met
+- [ ] Code review completed and approved
+- [ ] Testing completed and passed
+- [ ] Documentation updated and reviewed
+- [ ] Stakeholder approval obtained (if required)
+
+## Continuous Improvement
+
+### Task Sizing Calibration
+- **Regular retrospectives**: Review task size estimates vs. actual
+- **Adjust sizing criteria**: Update sizing framework based on learning
+- **Share knowledge**: Document common sizing patterns and anti-patterns
+- **Tool improvement**: Enhance task templates and processes
+
+### Process Optimization
+- **Bottleneck identification**: Find and address process bottlenecks
+- **Automation opportunities**: Automate repetitive aspects of task management
+- **Communication improvement**: Enhance task communication and handoffs
+- **Quality enhancement**: Continuously refine done criteria and quality gates
+
+This task management framework ensures consistent, high-quality delivery while providing clear expectations for all team members and maintaining alignment with project goals and specifications.
