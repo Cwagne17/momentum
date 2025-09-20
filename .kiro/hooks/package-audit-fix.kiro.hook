@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Package Audit Fix",
+  "description": "Automatically runs npm audit fix when package.json is updated to ensure security patches are applied for non-breaking changes",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The package.json file has been updated. Please run 'npm audit fix' to automatically apply security patches for any vulnerabilities found in the installed dependencies. This will update packages to secure versions that don't introduce breaking changes."
+  }
+}

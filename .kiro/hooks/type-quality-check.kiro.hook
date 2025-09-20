@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Type Quality Checker",
+  "description": "Automatically reviews TypeScript files after implementation to ensure no duplicate types, proper organization, complete function signatures with JSDoc comments, and proper parameter/return types",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the recently modified TypeScript files and ensure: 1) No duplicate type definitions exist across the codebase, 2) Types are properly organized and exported from appropriate index files, 3) All functions have complete parameter types, return types, and JSDoc documentation, 4) Suggest any refactoring to improve type organization and eliminate redundancy. Focus on the files that were just changed."
+  }
+}
