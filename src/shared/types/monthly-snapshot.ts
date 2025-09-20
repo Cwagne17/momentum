@@ -7,7 +7,7 @@
 import { z } from 'zod';
 import { isValidISODateTime } from '../utils';
 import { AssetEntrySpec, AssetEntrySpecSchema } from './asset';
-import { BaseDocument, DocumentKind, createBaseDocumentSchema } from './base-document';
+import { BaseDocument, DocumentKind, createTypedDocumentSchema } from './base-document';
 import { MONTH_FORMAT_REGEX } from './constants';
 import { LiabilityEntrySpec, LiabilityEntrySpecSchema } from './liability';
 
@@ -43,7 +43,4 @@ export const MonthlySnapshotSpecSchema = z.object({
 /**
  * Monthly snapshot document schema
  */
-export const MonthlySnapshotSchema = createBaseDocumentSchema(MonthlySnapshotSpecSchema).refine(
-    (data) => data.kind === DocumentKind.MonthlySnapshot,
-    { message: "Document kind must be MonthlySnapshot" }
-);
+export const MonthlySnapshotSchema = createTypedDocumentSchema(MonthlySnapshotSpecSchema, DocumentKind.MonthlySnapshot);

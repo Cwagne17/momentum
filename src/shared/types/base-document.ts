@@ -22,15 +22,16 @@ export enum DocumentKind {
     Portfolio = "Portfolio",
     MonthlySnapshot = "MonthlySnapshot",
     Asset = "Asset",
+    AssetEntry = "AssetEntry",
     Liability = "Liability",
-    Entry = "Entry",
+    LiabilityEntry = "LiabilityEntry",
 }
 
 /**
  * Base document interface following Kubernetes-style schema
- * @template T - The type of the spec property
+ * @template Spec - The type of the spec property
  */
-export interface BaseDocument<T = any> {
+export interface BaseDocument<Spec = any> {
     apiVersion: ApiVersion;
     kind: DocumentKind;
     metadata: {
@@ -39,18 +40,18 @@ export interface BaseDocument<T = any> {
         updatedAt: string;
         version: number;
     };
-    spec: T;
+    spec: Spec;
 }
 
 /**
  * Abstract base class for all document types
- * @template T - The type of the spec property
+ * @template Spec - The type of the spec property
  */
-export abstract class BaseDocumentClass<T> implements BaseDocument<T> {
+export abstract class BaseDocumentClass<Spec> implements BaseDocument<Spec> {
     abstract apiVersion: ApiVersion;
     abstract kind: DocumentKind;
-    abstract metadata: BaseDocument<T>["metadata"];
-    abstract spec: T;
+    abstract metadata: BaseDocument<Spec>["metadata"];
+    abstract spec: Spec;
 
     /**
      * Updates the metadata timestamps and version
@@ -74,18 +75,35 @@ export const MetadataSchema = z.object({
 
 /**
  * Base document schema factory
- * @template T - The spec schema type
+ * @template Spec - The spec schema type
  */
-export const createBaseDocumentSchema = <T extends z.ZodTypeAny>(specSchema: T) =>
+export const createBaseDocumentSchema = <Spec extends z.ZodTypeAny>(specSchema: Spec) =>
     z.object({
         apiVersion: z.enum([ApiVersion.V1]),
         kind: z.enum([
             DocumentKind.Portfolio,
             DocumentKind.MonthlySnapshot,
             DocumentKind.Asset,
+            DocumentKind.AssetEntry,
             DocumentKind.Liability,
-            DocumentKind.Entry,
+            DocumentKind.LiabilityEntry
         ]),
+        metadata: MetadataSchema,
+        spec: specSchema,
+    });
+
+/**
+ * Type-safe document schema factory that enforces a specific document kind
+ * @template Spec - The spec schema type
+ * @template Kind - The specific document kind
+ */
+export const createTypedDocumentSchema = <Spec extends z.ZodTypeAny, Kind extends DocumentKind>(
+    specSchema: Spec,
+    kind: Kind
+) =>
+    z.object({
+        apiVersion: z.literal(ApiVersion.V1),
+        kind: z.literal(kind),
         metadata: MetadataSchema,
         spec: specSchema,
     });

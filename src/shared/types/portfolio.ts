@@ -6,7 +6,7 @@
 
 import { z } from 'zod';
 import { isValidISODateTime } from '../utils';
-import { BaseDocument, DocumentKind, createBaseDocumentSchema } from './base-document';
+import { BaseDocument, DocumentKind, createTypedDocumentSchema } from './base-document';
 
 /**
  * Portfolio specification interface
@@ -40,7 +40,4 @@ export const PortfolioSpecSchema = z.object({
 /**
  * Portfolio document schema
  */
-export const PortfolioSchema = createBaseDocumentSchema(PortfolioSpecSchema).refine(
-    (data) => data.kind === DocumentKind.Portfolio,
-    { message: "Document kind must be Portfolio" }
-);
+export const PortfolioSchema = createTypedDocumentSchema(PortfolioSpecSchema, DocumentKind.Portfolio);

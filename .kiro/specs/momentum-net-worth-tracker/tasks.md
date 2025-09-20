@@ -24,7 +24,7 @@
   - Create MUI custom theme configuration with design system colors
   - _Requirements: 6.1, 6.2_
 
-- [ ] 4. Implement core data models and validation schemas
+- [x] 4. Implement core data models and validation schemas
   - Create TypeScript interfaces for BaseDocument, Asset, Liability, Entry, and MonthlySnapshot
   - Implement Zod schemas for runtime validation of all data models
   - Create DocumentKind enum and BaseDocumentClass abstract class

@@ -6,7 +6,7 @@
 
 import { z } from 'zod';
 import { isValidISODateTime } from '../utils';
-import { BaseDocument, DocumentKind, createBaseDocumentSchema } from './base-document';
+import { BaseDocument, DocumentKind, createTypedDocumentSchema } from './base-document';
 import { UUID_V4_REGEX } from './constants';
 
 /**
@@ -62,10 +62,7 @@ export const AssetSpecSchema = z.object({
 /**
  * Asset document schema
  */
-export const AssetSchema = createBaseDocumentSchema(AssetSpecSchema).refine(
-    (data) => data.kind === DocumentKind.Asset,
-    { message: "Document kind must be Asset" }
-);
+export const AssetSchema = createTypedDocumentSchema(AssetSpecSchema, DocumentKind.Asset);
 
 /**
  * Asset entry specification interface
@@ -80,7 +77,7 @@ export interface AssetEntrySpec {
  * Asset entry document type
  */
 export interface AssetEntry extends BaseDocument<AssetEntrySpec> {
-    kind: DocumentKind.Entry;
+    kind: DocumentKind.AssetEntry;
 }
 
 /**
@@ -95,7 +92,4 @@ export const AssetEntrySpecSchema = z.object({
 /**
  * Asset entry document schema
  */
-export const AssetEntrySchema = createBaseDocumentSchema(AssetEntrySpecSchema).refine(
-    (data) => data.kind === DocumentKind.Entry,
-    { message: "Document kind must be Entry" }
-);
+export const AssetEntrySchema = createTypedDocumentSchema(AssetEntrySpecSchema, DocumentKind.AssetEntry);

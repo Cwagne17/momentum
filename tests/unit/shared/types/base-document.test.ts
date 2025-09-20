@@ -18,8 +18,9 @@ describe('Base Document Types', () => {
             expect(DocumentKind.Portfolio).toBe('Portfolio');
             expect(DocumentKind.MonthlySnapshot).toBe('MonthlySnapshot');
             expect(DocumentKind.Asset).toBe('Asset');
+            expect(DocumentKind.AssetEntry).toBe('AssetEntry');
             expect(DocumentKind.Liability).toBe('Liability');
-            expect(DocumentKind.Entry).toBe('Entry');
+            expect(DocumentKind.LiabilityEntry).toBe('LiabilityEntry');
         });
     });
 

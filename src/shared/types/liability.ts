@@ -6,7 +6,7 @@
 
 import { z } from 'zod';
 import { isValidISODateTime } from '../utils';
-import { BaseDocument, DocumentKind, createBaseDocumentSchema } from './base-document';
+import { BaseDocument, DocumentKind, createTypedDocumentSchema } from './base-document';
 import { UUID_V4_REGEX } from './constants';
 
 /**
@@ -62,10 +62,7 @@ export const LiabilitySpecSchema = z.object({
 /**
  * Liability document schema
  */
-export const LiabilitySchema = createBaseDocumentSchema(LiabilitySpecSchema).refine(
-    (data) => data.kind === DocumentKind.Liability,
-    { message: "Document kind must be Liability" }
-);
+export const LiabilitySchema = createTypedDocumentSchema(LiabilitySpecSchema, DocumentKind.Liability);
 
 /**
  * Liability entry specification interface
@@ -80,7 +77,7 @@ export interface LiabilityEntrySpec {
  * Liability entry document type
  */
 export interface LiabilityEntry extends BaseDocument<LiabilityEntrySpec> {
-    kind: DocumentKind.Entry;
+    kind: DocumentKind.LiabilityEntry;
 }
 
 /**
@@ -95,7 +92,4 @@ export const LiabilityEntrySpecSchema = z.object({
 /**
  * Liability entry document schema
  */
-export const LiabilityEntrySchema = createBaseDocumentSchema(LiabilityEntrySpecSchema).refine(
-    (data) => data.kind === DocumentKind.Entry,
-    { message: "Document kind must be Entry" }
-);
+export const LiabilityEntrySchema = createTypedDocumentSchema(LiabilityEntrySpecSchema, DocumentKind.LiabilityEntry);
